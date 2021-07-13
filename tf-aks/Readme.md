@@ -26,7 +26,7 @@ Files used to provision the AKS cluster.
 - There are many ways to authenticate to the Azure provider. IN this tutorial, we will use an Active Directory service principal account. We can learn how to authenticate using a different method [here](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs#authenticating-to-azure).
 - First, we need to create an Active Directory service principal account using the Azure CLI.
   - ```
-    az ad spcreate-for-rbac --skip-assignment
+    az ad sp create-for-rbac --skip-assignment
     ```
 
 ## Update your `terraform.tfvars` file
@@ -61,6 +61,10 @@ az aks get-credentials --resource-group $(terraform output -raw resource_group_n
 
 ## Access Kubernetes Dashoard
 > To verify that your cluster's configuration, visit the Azure Portal's Kubernetes resource view. [Azure recommends](https://docs.microsoft.com/en-us/azure/aks/kubernetes-dashboard#start-the-kubernetes-dashboard) using this view over the default Kuernetes dashboard, since the AKS dashoard add-on is deprecated for Kubernetes versions 1.19+.
+- If the `kube-dashboard` addon is not enabled, you might need to enable that addon.
+  - ```
+    az aks enable-addons --addons kube-dashboard --resource-group $(terraform output --raw resource_group_name) --name $(terraform output --raw kubernetes_cluster_name)
+    ```
 - Run the following command to generate the Azure portal link.
   - ```
     az aks browse --resource-group $(terraform output --raw resource_group_name) --name $(terraform output --raw kubernetes_cluster_name)
